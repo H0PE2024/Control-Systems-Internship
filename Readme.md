@@ -1,26 +1,43 @@
+
 # Experimental Modeling and Control of Multi-Agent System (University of Washington)
 This work was carried out under the guidance of Professor [Santosh Devasia]((https://www.me.washington.edu/facultyfinder/santosh-devasia)) and then PHD student [Anuj Tiwari](https://mech.iitm.ac.in/profile.php?fname=anujt) at the University of Washington, in Summer of 2018. Detailed report can be found [here](https://drive.google.com/file/d/1YZ9jwvAxSkL1Ajf-2Ejj4XCATk1ZQ6S7/view). 
+
+# Index
+
+1. [Introduction](#introduction)
+2. [Modelling the Experimental setup](#modelling-the-experimental-setup)
+    - [Observations from Step Response](#observations-from-step-response)
+    - [Linearising the System](#linearising-the-system)
+    - [Introducing Sluggish Dynamics](#introducing-sluggish-dynamics)
+    - [Closed Loop Architecture](#closed-loop-architecture)
+    - [Model Validation](#model-validation)
+      - [Initial Conditions 1](#initial-conditions-1)
+      - [Initial Conditions 2](#initial-conditions-2)
+      - [Initial Conditions 3](#initial-conditions-3)
+    - [Conclusions from validation](#conclusions)
+3. [Improved Cohesion by Increasing ${\hat{k}}$](#improved-cohesion-by-increasing-k)
+4. [Further Research](#further-direction)
 
 # Introduction
 This work aims to find strategies to efficiently transfer velocity-transition information through a robotic platoon without centralized communication, which is crucial for maintaining cohesive maneuvers and improving performance. 
 
-# Experimental Setup Preparation
+# Modelling the Experimental Setup
 The aim was to experimentally estimate the system dynamics (PWM vs velocity)
 for robot-cars, and linearise it to apply linear control theory. We hope that system has first-order dynamics and can be represented as:     
 
    
 ![model](System_model.png)
 - where $P$ is commanded PWM
--  V  is Velocity
+- $ V $ is Velocity
 
-# Observations from Step Response
+## Observations from Step Response
   
 - The system dynamics are fast (very low time constant value ~ 0.1 s).   
 - Steady state gain (Velocity vs PWM) is non linear, as shown in the following graph.   
   
 ![model](Vss_vs_pwm.png)
 
-# Linearising the system
+## Linearising the system
 We implement an additional gain ($\frac{\hat{k}}{K(P)}$) in the software code, before commanding the PWM as:  
   
 
@@ -31,14 +48,14 @@ which linearises the system as:
 ![model](final_dynamics.png)  
 
 
-# Introducing sluggish dynamics
+## Introducing sluggish dynamics
 We add an LPF to replicate sluggish dynamics of real world systems. The value can be chosen depending on the kind of systems one wants to test control strategies on. (can be high for trucks, lower for cars, and very low for racing cars). This can be shown schematically as:
 
 ![lpf_added](LPF_added.png)  
 
 If b << a, then system can be approximated as a linear first order system with dynamics driven by $b$ only. 
 
-# Closed Loop architecture
+## Closed Loop architecture
 
 The control law used for validation is given by:
 
@@ -47,18 +64,18 @@ X = c \cdot (d - d_0) \tag{7}
 $$
 
 Where:
-- $d$ is the relative distance measured by the ultrasonic sensor.
+- $ d$ is the relative distance measured by the ultrasonic sensor.
 - $d_0$ is the desired headway (15 cm for our experiments).
-- $c$ is the gain, which can be adjusted based on the experiments performed.
-- $a$ ~ 10, derived from step response experiments of PWM vs velocity.
-- $b = 2$ for experiments mentioned here, although results are similar for lower values of $b$
+- $ c $ is the gain, which can be adjusted based on the experiments performed.
 
 Schematic representing closed loop dynamics is as:
 
 ![closed_loop](Closed_loop_dynamics.png)  
 
+- where $a$ ~ 10, derived from step response experiments of PWM vs velocity.
+- $b = 2$ for experiments mentioned here, although results are similar for lower values of $b$
 
-# Experimental validation  
+# Model validation
  
 ## Initial Conditions 1
 
@@ -66,7 +83,7 @@ Schematic representing closed loop dynamics is as:
       
 (The follower is kept behind the leader at a distance of 50 cm, and the leader does not move in the experiment.)
 
-The graph shows the variation of relative distance $d$ with time.    
+The graph shows the variation of $d$ with time.    
 
 ![b=2,c=1.5](b=2,c=1.5_step_response.png)
 
@@ -86,7 +103,7 @@ The graph shows the variation of relative distance $d$ with time.
 
 - The follower starts with a velocity of 0, with $d - d_0$ = 0 cm.    
 
-The graph shows the variation of relative distance $d$ with time.     
+The graph shows the variation of $d$ with time.     
 
 ![b=2,c=1.5](ramp_response_b_2_c_1.5.png)
 
@@ -98,10 +115,11 @@ The graph shows the variation of relative distance $d$ with time.
 We use conditions mentioned above in **Initial Conditions 2** , such that leader starts moving suddenly as [here](Leader_bot.png)
 ![b=2,c=4](Multi-agent-experiments.png)
 
-### Observations
-The deviation from simulation propagates over the chain of bots, and delay in information transfer/loss of cohesion is more than that estimated by the simulation. We will theoretically evaluate our control strategies on our approximate model, and experimentally validate if our conclusions are correct.
+## Conclusions
+- There is greater loss of cohesion in experiments than simulation. This can be because of delays in individual bot-leader dynamics, which sum up at the last bot.
+- We propose using this linear model to theoretically evaluate control strategies. The evaluated control strategy when implemented on our test setup should show similar improvements.
 
-# Improved cohesion by increasing ${\hat{k}}$
+# Improved cohesion by increasing k
 
 
 ${\hat{k}}$ = 1  
@@ -115,6 +133,7 @@ ${\hat{k}}$ = 1.5
 Cohesion improves with reduction in peak velocity difference. However, this improvement is at the cost of increasing the maximum input $(u_max)$ from 20 $cm/s^2$ to 30 $cm/s^2$. **Therefore, constraints on the maximum input can limit the maximum improvement in cohesion achievable by increasing ${\hat{k}}$.**
   
 
-#Further research was carried out by Anuj and led to this [paper](https://ieeexplore.ieee.org/document/9123234)
+# Further Direction
+Further research was carried out by Anuj and led to this [paper](https://ieeexplore.ieee.org/document/9123234)
 
 
