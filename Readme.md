@@ -11,7 +11,7 @@ for robot-cars, and linearise it to apply linear control theory. We hope that sy
    
 ![model](System_model.png)
 - where $P$ is commanded PWM
-- $ V $ is Velocity
+-  V  is Velocity
 
 # Observations from Step Response
   
@@ -47,16 +47,16 @@ X = c \cdot (d - d_0) \tag{7}
 $$
 
 Where:
-- $ d$ is the relative distance measured by the ultrasonic sensor.
+- $d$ is the relative distance measured by the ultrasonic sensor.
 - $d_0$ is the desired headway (15 cm for our experiments).
-- $ c $ is the gain, which can be adjusted based on the experiments performed.
+- $c$ is the gain, which can be adjusted based on the experiments performed.
+- $a$ ~ 10, derived from step response experiments of PWM vs velocity.
+- $b = 2$ for experiments mentioned here, although results are similar for lower values of $b$
 
 Schematic representing closed loop dynamics is as:
 
 ![closed_loop](Closed_loop_dynamics.png)  
 
-- where $a$ ~ 10, derived from step response experiments of PWM vs velocity.
-- $b = 2$ for experiments mentioned here, although results are similar for lower values of $b$
 
 # Experimental validation  
  
@@ -66,7 +66,7 @@ Schematic representing closed loop dynamics is as:
       
 (The follower is kept behind the leader at a distance of 50 cm, and the leader does not move in the experiment.)
 
-The graph shows the variation of $d$ with time.    
+The graph shows the variation of relative distance $d$ with time.    
 
 ![b=2,c=1.5](b=2,c=1.5_step_response.png)
 
@@ -86,7 +86,7 @@ The graph shows the variation of $d$ with time.
 
 - The follower starts with a velocity of 0, with $d - d_0$ = 0 cm.    
 
-The graph shows the variation of $d$ with time.     
+The graph shows the variation of relative distance $d$ with time.     
 
 ![b=2,c=1.5](ramp_response_b_2_c_1.5.png)
 
