@@ -16,7 +16,10 @@ This work was carried out under the guidance of Professor [Santosh Devasia]((htt
       - [Initial Conditions 3](#initial-conditions-3)
     - [Conclusions from validation](#conclusions)
 3. [Improved Cohesion by Increasing ${\hat{k}}$](#improved-cohesion-by-increasing-k)
-4. [Further Research](#further-direction)
+4. [Potential/Lyapunov functions for control](#Potential/Lyapunov-functions-for-control)
+5. [Inspiration from Machine learning](#inspiration-from-machine-learning)
+6. [Gradient descent : From ML to Controls](#gradient-descent--from-ml-to-controls)
+7. [Further Research](#further-research)
 
 # Introduction
 This work aims to find strategies to efficiently transfer velocity-transition information through a robotic platoon without centralized communication, which is crucial for maintaining cohesive maneuvers and improving performance. 
@@ -60,7 +63,7 @@ If b << a, then system can be approximated as a linear first order system with d
 The control law used for validation is given by:
 
 $$
-X = c \cdot (d - d_0) \tag{7}
+X = c \cdot (d - d_0) 
 $$
 
 Where:
@@ -116,24 +119,111 @@ We use conditions mentioned above in **Initial Conditions 2** , such that leader
 ![b=2,c=4](Multi-agent-experiments.png)
 
 ## Conclusions
-- There is greater loss of cohesion in experiments than simulation. This can be because of delays in individual bot-leader dynamics, which sum up at the last bot.
+- There is greater loss of cohesion in experiments than simulation. This can be because of delays in individual bot-leader dynamics, which sum up at the last bot\ unconsidered dynamics due to sampling time = 0.2 seconds
 - We propose using this linear model to theoretically evaluate control strategies. The evaluated control strategy when implemented on our test setup should show similar improvements.
+- Since time constant is a very low value, the system can be also approximated as a zero-order system, for analysing control strategies.
+# Improved cohesion by increasing k 
+For ease of analysis we assume the system to be zero-order,  i.e. b = \infty
 
-# Improved cohesion by increasing k
-
-
-${\hat{k}}$ = 1  
+${\hat{k}}$ = 1  , c =1
   
 ![k=1](k_1.png)
   
-${\hat{k}}$ = 1.5 
+${\hat{k}}$ = 1.5 , c = 1
    
 ![k=1.5](k_1.5.png)
 
-Cohesion improves with reduction in peak velocity difference. However, this improvement is at the cost of increasing the maximum input $(u_max)$ from 20 $cm/s^2$ to 30 $cm/s^2$. **Therefore, constraints on the maximum input can limit the maximum improvement in cohesion achievable by increasing ${\hat{k}}$.**
+Cohesion improves with reduction in peak velocity difference. However, this improvement is at the cost of increasing the maximum input $(u_max)$ from 20 $cm/s^2$ to 30 $cm/s^2$. **Therefore, constraints on the maximum input can limit the maximum improvement in cohesion achievable by increasing ${\hat{k}}$. We cannot use diffusion control equations ($X = c \cdot (d - d_0)$) to get the results we want** 
   
 
-# Further Direction
-Further research was carried out by Anuj and led to this [paper](https://ieeexplore.ieee.org/document/9123234)
+
+## Potential/Lyapunov functions for control
+Assume $\Phi_i(V[m])$ as the following function, i.e.,
+
+$$
+\Phi_i(V[m]) = \frac{\hat{k}}{2} \left( v_i[m] - v_{i-1}[m] \right)^2 = \frac{\hat{k}}{2} (v_{rf,i}[m])^2,
+$$
+
+where
+
+$$
+v_{rf,i}[m] = v_i[m] - v_{i-1}[m]
+$$
+
+is the relative velocity with respect to the preceding bot. The velocity-state vector $V[m]$ is defined as
+
+$$
+V[m] = [v_1[m], v_2[m], \dots, v_i[m], \dots, v_n[m]]^T.
+$$
+
+We define cohesion as all cars having equal velocity, i.e $v_i = v_j$, which is achieved when $\Phi = 0$     
+**PROBLEM STATEMENT**    
+Find a control law which changes the states such that thr function $\Phi$ converges to 0.
+## Inspiration from Machine learning
+Following are common methods used in literature for obtaining minima in machine learning algos
+- Gradient Descent
+- Gradient Descent with Momentum
+### Gradient Descent
+
+Gradient Descent is an optimization algorithm used to minimize a cost function by iteratively moving in the direction of the steepest decrease.
+
+**Update Rule**:
+$$
+\theta_{t+1} = \theta_t - \eta \nabla_\theta J(\theta_t)
+$$
+
+Where:
+- $ \theta_t $ is the parameter vector at iteration $ t $.
+- $ \eta $ is the learning rate.
+- $ \nabla_\theta J(\theta_t) $ is the gradient of the cost function $ J(\theta) $ with respect to the parameters $ \theta $.
+
+- Gradient Descent with Momentum
+
+### Gradient Descent with Momentum
+
+Momentum is a technique to accelerate gradient descent by smoothing the updates using past gradients. It helps in overcoming local minima and speeding up convergence.
+
+**Update Rules**:
+$$
+v_{t+1} =  v_t + (1 - \beta) \nabla_\theta J(\theta_t)
+$$
+$$
+\theta_{t+1} = \theta_t - \eta v_{t+1}
+$$
+
+Where:
+- $ v_t $ is the velocity or momentum term at iteration $ t $.
+- $ \beta $ is the momentum coefficient (typically close to 1, e.g., 0.9).
+- $ \eta $ is the learning rate.
+- $ \nabla_\theta J(\theta_t) $ is the gradient of the cost function.
+
+## Gradient descent : From ML to Controls
+Applying gradient descent, the control law becomes
+
+$$
+v_i[m + 1] = v_i[m] - \frac{\partial \Phi_i(V[m])}{\partial v_i[m]} \delta t.
+$$
+     
+Applying gradient descent with momentum (also known as DSR : Delayed Self Reinforcement), the control law becomes: 
+
+$$
+v_i[m + 1] = v_i[m] - \frac{\partial \Phi_i\left(( V[m] )\right)}{\partial v_i[m]} \delta t + \beta \left(v_i[m] - v_i[m - 1]\right).
+$$
+
+The experimental results show quick transfer of velocity information in the platoon, even when inputs are constrained $(20 cm/s^2)$. 
+
+<table>
+  <tr>
+    <td><strong>WITH DSR</strong></td>
+    <td><strong>WITHOUT DSR (&beta; = 0)</strong></td>
+  </tr>
+  <tr>
+    <td><img src="DSR.png" alt="DSR" style="width: 100%;"></td>
+    <td><img src="without_DSR.png" alt="without_DSR" style="width: 100%;"></td>
+  </tr>
+</table>
 
 
+
+# Further Research
+While we achieve cohesion faster with DSR, the results are stable only for a range of values of $\beta$. Further theoretical analysis of transfer functions need to be done to find equations to estimate $\beta$, where *string stability* is ensured.
