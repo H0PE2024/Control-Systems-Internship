@@ -15,8 +15,8 @@ This work was carried out under the guidance of Professor [Santosh Devasia]((htt
       - [Initial Conditions 2](#initial-conditions-2)
       - [Initial Conditions 3](#initial-conditions-3)
     - [Conclusions from validation](#conclusions)
-3. [Improved Cohesion by Increasing ${\hat{k}}$](#improved-cohesion-by-increasing-k)
-4. [Potential/Lyapunov functions for control](#Potential/Lyapunov-functions-for-control)
+3. [Improved Cohesion by Increasing k](#improved-cohesion-by-increasing-k)
+4. [Lyapunov functions for control](#Lyapunov-functions-for-control)
 5. [Inspiration from Machine learning](#inspiration-from-machine-learning)
 6. [Gradient descent : From ML to Controls](#gradient-descent--from-ml-to-controls)
 7. [Further Research](#further-research)
@@ -31,7 +31,7 @@ for robot-cars, and linearise it to apply linear control theory. We hope that sy
    
 ![model](System_model.png)
 - where $P$ is commanded PWM
-- $ V $ is Velocity
+- $V$ is Velocity
 
 ## Observations from Step Response
   
@@ -67,9 +67,9 @@ X = c \cdot (d - d_0)
 $$
 
 Where:
-- $ d$ is the relative distance measured by the ultrasonic sensor.
+- $d$ is the relative distance measured by the ultrasonic sensor.
 - $d_0$ is the desired headway (15 cm for our experiments).
-- $ c $ is the gain, which can be adjusted based on the experiments performed.
+- $c$ is the gain, which can be adjusted based on the experiments performed.
 
 Schematic representing closed loop dynamics is as:
 
@@ -133,11 +133,11 @@ ${\hat{k}}$ = 1.5 , c = 1
    
 ![k=1.5](k_1.5.png)
 
-Cohesion improves with reduction in peak velocity difference. However, this improvement is at the cost of increasing the maximum input $(u_max)$ from 20 $cm/s^2$ to 30 $cm/s^2$. **Therefore, constraints on the maximum input can limit the maximum improvement in cohesion achievable by increasing ${\hat{k}}$. We cannot use diffusion control equations ($X = c \cdot (d - d_0)$) to get the results we want** 
+Cohesion improves with reduction in peak velocity difference. However, this improvement is at the cost of increasing the maximum input $(u_max)$ from 20 $cm/s^2$ to 30 $cm/s^2$. **Therefore, constraints on the maximum input can limit the maximum improvement in cohesion achievable by increasing ${\hat{k}}$. We cannot use diffusion control equations ($$X = c \cdot (d - d_0)$$) to get the results we want** 
   
 
 
-## Potential/Lyapunov functions for control
+## Lyapunov functions for control     
 Assume $\Phi_i(V[m])$ as the following function, i.e.,
 
 $$
@@ -168,14 +168,15 @@ Following are common methods used in literature for obtaining minima in machine 
 Gradient Descent is an optimization algorithm used to minimize a cost function by iteratively moving in the direction of the steepest decrease.
 
 **Update Rule**:
+
 $$
 \theta_{t+1} = \theta_t - \eta \nabla_\theta J(\theta_t)
 $$
 
 Where:
-- $ \theta_t $ is the parameter vector at iteration $ t $.
-- $ \eta $ is the learning rate.
-- $ \nabla_\theta J(\theta_t) $ is the gradient of the cost function $ J(\theta) $ with respect to the parameters $ \theta $.
+- $\theta_t$ is the parameter vector at iteration $t$.
+- $\eta$ is the learning rate.
+- $\nabla_\theta J(\theta_t)$ is the gradient of the cost function $J(\theta)$ with respect to the parameters $\theta$.
 
 - Gradient Descent with Momentum
 
@@ -184,18 +185,20 @@ Where:
 Momentum is a technique to accelerate gradient descent by smoothing the updates using past gradients. It helps in overcoming local minima and speeding up convergence.
 
 **Update Rules**:
+
 $$
 v_{t+1} =  v_t + (1 - \beta) \nabla_\theta J(\theta_t)
 $$
+
 $$
 \theta_{t+1} = \theta_t - \eta v_{t+1}
 $$
 
 Where:
-- $ v_t $ is the velocity or momentum term at iteration $ t $.
-- $ \beta $ is the momentum coefficient (typically close to 1, e.g., 0.9).
-- $ \eta $ is the learning rate.
-- $ \nabla_\theta J(\theta_t) $ is the gradient of the cost function.
+- $v_t$ is the velocity or momentum term at iteration $t$.
+- $\beta$ is the momentum coefficient (typically close to 1, e.g., 0.9).
+- $\eta$ is the learning rate.
+- $\nabla_\theta J(\theta_t)$ is the gradient of the cost function.
 
 ## Gradient descent : From ML to Controls
 Applying gradient descent, the control law becomes
