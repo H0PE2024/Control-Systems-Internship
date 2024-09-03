@@ -16,10 +16,8 @@ This work was carried out under the guidance of Professor [Santosh Devasia]((htt
       - [Initial Conditions 3](#initial-conditions-3)
     - [Conclusions from validation](#conclusions)
 3. [Improved Cohesion by Increasing ${\hat{k}}$](#improved-cohesion-by-increasing-k)
-4. [Potential/Lyapunov functions for control](#Potential/Lyapunov-functions-for-control)
-5. [Inspiration from Machine learning](#inspiration-from-machine-learning)
-6. [Gradient descent : From ML to Controls](#gradient-descent--from-ml-to-controls)
-7. [Further Research](#further-research)
+4. [A-DSR implementation](#a-dsr-based-implementation)
+5. [Further Research](#further-research)
 
 # Introduction
 This work aims to find strategies to efficiently transfer velocity-transition information through a robotic platoon without centralized communication, which is crucial for maintaining cohesive maneuvers and improving performance. 
