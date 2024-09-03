@@ -1,6 +1,6 @@
 
 # Experimental Modeling and Control of Multi-Agent System (University of Washington)
-This work was carried out under the guidance of Professor [Santosh Devasia](https://www.me.washington.edu/facultyfinder/santosh-devasia) and then PHD student [Anuj Tiwari](https://mech.iitm.ac.in/profile.php?fname=anujt) at the University of Washington, in Summer of 2018. Detailed report can be found [here](https://drive.google.com/file/d/1YZ9jwvAxSkL1Ajf-2Ejj4XCATk1ZQ6S7/view). 
+This work was carried out under the guidance of Professor [Santosh Devasia]((https://www.me.washington.edu/facultyfinder/santosh-devasia)) and then PHD student [Anuj Tiwari](https://mech.iitm.ac.in/profile.php?fname=anujt) at the University of Washington, in Summer of 2018. Detailed report can be found [here](https://drive.google.com/file/d/1YZ9jwvAxSkL1Ajf-2Ejj4XCATk1ZQ6S7/view). 
 
 # Index
 
@@ -15,8 +15,8 @@ This work was carried out under the guidance of Professor [Santosh Devasia](http
       - [Initial Conditions 2](#initial-conditions-2)
       - [Initial Conditions 3](#initial-conditions-3)
     - [Conclusions from validation](#conclusions)
-3. [Improved Cohesion by Increasing k](#improved-cohesion-by-increasing-k)
-4. [Lyapunov functions for control](#Lyapunov-functions-for-control)
+3. [Improved Cohesion by Increasing ${\hat{k}}$](#improved-cohesion-by-increasing-k)
+4. [Potential/Lyapunov functions for control](#Potential/Lyapunov-functions-for-control)
 5. [Inspiration from Machine learning](#inspiration-from-machine-learning)
 6. [Gradient descent : From ML to Controls](#gradient-descent--from-ml-to-controls)
 7. [Further Research](#further-research)
@@ -31,7 +31,7 @@ for robot-cars, and linearise it to apply linear control theory. We hope that sy
    
 ![model](System_model.png)
 - where $P$ is commanded PWM
-- $V$ is Velocity
+- $ V $ is Velocity
 
 ## Observations from Step Response
   
@@ -67,9 +67,9 @@ X = c \cdot (d - d_0)
 $$
 
 Where:
-- $d$ is the relative distance measured by the ultrasonic sensor.
+- $ d$ is the relative distance measured by the ultrasonic sensor.
 - $d_0$ is the desired headway (15 cm for our experiments).
-- $c$ is the gain, which can be adjusted based on the experiments performed.
+- $ c $ is the gain, which can be adjusted based on the experiments performed.
 
 Schematic representing closed loop dynamics is as:
 
@@ -133,85 +133,26 @@ ${\hat{k}}$ = 1.5 , c = 1
    
 ![k=1.5](k_1.5.png)
 
-Cohesion improves with reduction in peak velocity difference. However, this improvement is at the cost of increasing the maximum input $(u_max)$ from 20 $cm/s^2$ to 30 $cm/s^2$. **Therefore, constraints on the maximum input can limit the maximum improvement in cohesion achievable by increasing ${\hat{k}}$. We cannot use diffusion control equations ($$X = c \cdot (d - d_0)$$) to get the results we want** 
+Cohesion improves with reduction in peak velocity difference. However, this improvement is at the cost of increasing the maximum input $(u_max)$ from 20 $cm/s^2$ to 30 $cm/s^2$. **Therefore, constraints on the maximum input can limit the maximum improvement in cohesion achievable by increasing ${\hat{k}}$. We cannot use diffusion control equations ($X = c \cdot (d - d_0)$) for fast information transfer, within system's constraints** 
   
 
-
-## Lyapunov functions for control     
-Assume $\Phi_i(V[m])$ as the following function, i.e.,
-
-$$
-\Phi_i(V[m]) = \frac{\hat{k}}{2} \left( v_i[m] - v_{i-1}[m] \right)^2 = \frac{\hat{k}}{2} (v_{rf,i}[m])^2,
-$$
-
-where
+## A-DSR based implementation
+The control law is modified as:
 
 $$
-v_{rf,i}[m] = v_i[m] - v_{i-1}[m]
+v_i[m + 1] = v_i[m] - k*(v_i[m]-v_{i+1}[m]) \delta t + \beta \left(v_i[m] - v_i[m - 1]\right).
 $$
-
-is the relative velocity with respect to the preceding bot. The velocity-state vector $V[m]$ is defined as
-
-$$
-V[m] = [v_1[m], v_2[m], \dots, v_i[m], \dots, v_n[m]]^T.
-$$
-
-We define cohesion as all cars having equal velocity, i.e $v_i = v_j$, which is achieved when $\Phi = 0$     
-**PROBLEM STATEMENT**    
-Find a control law which changes the states such that thr function $\Phi$ converges to 0.
-## Inspiration from Machine learning
-Following are common methods used in literature for obtaining minima in machine learning algos
-- Gradient Descent
-- Gradient Descent with Momentum
-### Gradient Descent
-
-Gradient Descent is an optimization algorithm used to minimize a cost function by iteratively moving in the direction of the steepest decrease.
-
-**Update Rule**:
+which translates to pde described by the wave equation:
 
 $$
-\theta_{t+1} = \theta_t - \eta \nabla_\theta J(\theta_t)
+\beta\delta t\frac{\partial^2 v}{\partial t^2} + (1-\beta) \frac{\partial v}{\partial t} = \frac{\gamma c^2}{(2D)} \nabla^2 v
 $$
 
-Where:
-- $\theta_t$ is the parameter vector at iteration $t$.
-- $\eta$ is the learning rate.
-- $\nabla_\theta J(\theta_t)$ is the gradient of the cost function $J(\theta)$ with respect to the parameters $\theta$.
+where $c$ is the average distance to the neighbors, X represents the
+spatial location of agents, D is the number of dimensions of the
+spatial variable X over which the information $v$ is varying.[(link)](https://faculty.washington.edu/devasia/Research/Papers/Devasia_Swarm_Control.pdf)
 
-- Gradient Descent with Momentum
 
-### Gradient Descent with Momentum
-
-Momentum is a technique to accelerate gradient descent by smoothing the updates using past gradients. It helps in overcoming local minima and speeding up convergence.
-
-**Update Rules**:
-
-$$
-v_{t+1} =  v_t + (1 - \beta) \nabla_\theta J(\theta_t)
-$$
-
-$$
-\theta_{t+1} = \theta_t - \eta v_{t+1}
-$$
-
-Where:
-- $v_t$ is the velocity or momentum term at iteration $t$.
-- $\beta$ is the momentum coefficient (typically close to 1, e.g., 0.9).
-- $\eta$ is the learning rate.
-- $\nabla_\theta J(\theta_t)$ is the gradient of the cost function.
-
-## Gradient descent : From ML to Controls
-Applying gradient descent, the control law becomes
-
-$$
-v_i[m + 1] = v_i[m] - \frac{\partial \Phi_i(V[m])}{\partial v_i[m]} \delta t.
-$$
-     
-Applying gradient descent with momentum (also known as DSR : Delayed Self Reinforcement), the control law becomes: 
-
-$$
-v_i[m + 1] = v_i[m] - \frac{\partial \Phi_i\left(( V[m] )\right)}{\partial v_i[m]} \delta t + \beta \left(v_i[m] - v_i[m - 1]\right).
-$$
 
 The experimental results show quick transfer of velocity information in the platoon, even when inputs are constrained $(20 cm/s^2)$. 
 
