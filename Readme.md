@@ -142,11 +142,12 @@ The control law is modified as:
 $$
 v_i[m + 1] = v_i[m] - k*(v_i[m]-v_{i+1}[m]) \delta t + \beta \left(v_i[m] - v_i[m - 1]\right).
 $$
+
 which translates to pde described by the wave equation:
 
 $$
 \beta\delta t\frac{\partial^2 v}{\partial t^2} + (1-\beta) \frac{\partial v}{\partial t} = \frac{\gamma c^2}{(2D)} \nabla^2 v
-$$
+$$    
 
 where $c$ is the average distance to the neighbors, X represents the
 spatial location of agents, D is the number of dimensions of the
