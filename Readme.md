@@ -173,7 +173,7 @@ The experimental results show quick transfer of velocity information in the plat
 
 
 $$
-\frac{\partial v(t)}{\partial t} = \frac{\gamma c^2}{(2D)} \nabla^2 v(t)
+\frac{\partial v(t)}{\partial t} = \frac{\gamma c^2}{(2D)} \nabla^2 v
 $$
 
 
