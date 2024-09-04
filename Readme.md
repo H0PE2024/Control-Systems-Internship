@@ -186,11 +186,11 @@ $$
 **Poles without DSR**
 
 
-For a field with some boundary conditions in x, the poles are given by
+For a field with some boundary conditions in x, the poles are given by      
 
-$$s_i + \gamma {\lambda_i} = 0$$
+$$s_i + \gamma {\lambda_i} = 0$$     
 
-The settling $T_{s,i}$ time can be approximated as 
+The settling $T_{s,i}$ time can be approximated as      
 
 $$
 T_{s,i} = \frac{4}{|s_i|} = \frac{4}{\gamma \lambda_i}
@@ -199,25 +199,25 @@ $$
 
 **Poles with DSR**
 
-For the same boundary conditions in x as above, the poles are given by
+For the same boundary conditions in x as above, the poles are given by    
 
 
 $$s^2 + \frac{(1 - \beta)}{\beta\delta_t }s + \frac{\gamma {\lambda_i}}{\beta \delta_t} = 0$$
 
-or
+or     
 
 $$s^2 + 2 \zeta_i \omega_i s + \omega_i^2 = 0$$
 
-where
+where      
 
 $$\omega_i = \sqrt{\frac{\gamma\lambda_i }{\beta \delta_t}}$$
 
-and
+and         
 
 $$2 \zeta_i \omega_i = \frac{(1 - \beta)\gamma\lambda_i }{\beta \delta_t}$$
 
 Assume critically damped systems to ensure no oscillations during information transfer,
-i.e. $\zeta_i = 1$
+i.e. $\zeta_i = 1$        
 
 $$
 \beta = (1 + 2\gamma \delta_t \lambda_i) - \sqrt{(1 + 2\gamma \delta_t \lambda_i)^2 - 1}
@@ -227,12 +227,12 @@ $$
 \hat T_{s,i} = \frac{4}{\omega \zeta} = 2*\sqrt{\beta \delta_t T_{s,i}}
 $$
 
-where
-$ 0<\beta<1 $ and $\delta_t$ can be as low as zero.
+where              
+$ 0<\beta<1 $ and $\delta_t$ can be as low as zero.            
 
 Hence DSR based control laws ensure low settling times without oscillations, compared to diffusion based control laws
 
 
 
 # Further Research
-While we achieve cohesion faster with DSR, the results are stable only for a range of values of $\beta$. Further theoretical analysis of transfer functions need to be done to find equations to estimate $\beta$, where *string stability* is ensured.
+Further analysis needs to be done to evaluate string stability of such control laws.
