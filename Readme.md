@@ -17,7 +17,8 @@ This work was carried out under the guidance of Professor [Santosh Devasia]((htt
     - [Conclusions from validation](#conclusions)
 3. [Improved Cohesion by Increasing ${\hat{k}}$](#improved-cohesion-by-increasing-k)
 4. [A-DSR implementation](#a-dsr-based-implementation)
-5. [Further Research](#further-research)
+5. [Theoretical Analysis](#theoretical-analysis)
+6. [Further Research](#further-research)
 
 # Introduction
 This work aims to find strategies to efficiently transfer velocity-transition information through a robotic platoon without centralized communication, which is crucial for maintaining cohesive maneuvers and improving performance. 
@@ -165,6 +166,71 @@ The experimental results show quick transfer of velocity information in the plat
     <td><img src="without_DSR.png" alt="without_DSR" style="width: 100%;"></td>
   </tr>
 </table>
+
+# Theoretical analysis
+
+**Without DSR**
+
+
+$$
+\frac{\partial v(t)}{\partial t} = \frac{\gamma c^2}{(2D)} \nabla^2 v(t)
+$$
+
+
+**With DSR**
+
+$$
+\beta\delta t\frac{\partial^2 v}{\partial t^2} + (1-\beta) \frac{\partial v}{\partial t} = \frac{\gamma c^2}{(2D)} \nabla^2 v
+$$    
+
+**Poles without DSR**
+
+
+For a field with some boundary conditions in x, the poles are given by
+
+$$s_i + \gamma {\lambda_i} = 0$$
+
+The settling $T_{s,i}$ time can be approximated as 
+
+$$
+T_{s,i} = \frac{4}{|s_i|} = \frac{4}{\gamma \lambda_i}
+$$
+
+
+**Poles with DSR**
+
+For the same boundary conditions in x as above, the poles are given by
+
+
+$$s^2 + \frac{(1 - \beta)}{\beta\delta_t }s + \frac{\gamma {\lambda_i}}{\beta \delta_t} = 0$$
+
+or
+
+$$s^2 + 2 \zeta_i \omega_i s + \omega_i^2 = 0$$
+
+where
+
+$$\omega_i = \sqrt{\frac{\gamma\lambda_i }{\beta \delta_t}}$$
+
+and
+
+$$2 \zeta_i \omega_i = \frac{(1 - \beta)\gamma\lambda_i }{\beta \delta_t}$$
+
+Assume critically damped systems to ensure no oscillations during information transfer,
+i.e. $\zeta_i = 1$
+
+$$
+\beta = (1 + 2\gamma \delta_t \lambda_i) - \sqrt{(1 + 2\gamma \delta_t \lambda_i)^2 - 1}
+$$
+
+$$
+\hat T_{s,i} = \frac{4}{\omega \zeta} = 2*\sqrt{\beta \delta_t T_{s,i}}
+$$
+
+where
+$ 0<\beta<1 $ and $\delta_t$ can be as low as zero.
+
+Hence DSR based control laws ensure low settling times without oscillations, compared to diffusion based control laws
 
 
 
