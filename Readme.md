@@ -230,7 +230,7 @@ $$
 where              
  0< $\beta$ <1  and $\delta_t$ can be as low as zero.            
 
-Hence DSR based control laws ensure low settling times without oscillations, compared to diffusion based control laws
+**Hence DSR based control laws ensure low settling times without oscillations, compared to diffusion based control laws**
 
 
 
